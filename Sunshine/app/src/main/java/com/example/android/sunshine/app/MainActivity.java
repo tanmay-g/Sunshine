@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,6 +18,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -70,31 +70,31 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
+        Log.i(LOG_TAG, "onPause");
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        Log.i(LOG_TAG, "onResume");
         super.onResume();
     }
 
     @Override
     protected void onStop() {
+        Log.i(LOG_TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onStart() {
+        Log.i(LOG_TAG, "onStart");
         super.onStart();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
-
-    @Override
     protected void onDestroy() {
+        Log.i(LOG_TAG, "onDestroy");
         super.onDestroy();
     }
 }
