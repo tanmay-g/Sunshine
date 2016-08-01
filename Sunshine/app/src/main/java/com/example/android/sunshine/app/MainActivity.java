@@ -1,30 +1,46 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    String mLocation = null;
+    boolean mTwoPane;
+    //private final String FORECASTFRAGMENT_TAG = "ForecastFragmentTag";
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(LOG_TAG, "onCreate");
+        //Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
-                    .commit();
+        mLocation = Utility.getPreferredLocation(this);
+        if (findViewById(R.id.weather_detail_container) != null){
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailsFragment(),DETAILFRAGMENT_TAG)
+                        .commit();
+            }
         }
+        else {
+            mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
+        }
+
+        ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        ff.setAdapterIsTwoPane(mTwoPane);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
@@ -47,54 +63,73 @@ public class MainActivity extends ActionBarActivity {
             startActivity(new Intent(this,SettingsActivity.class));
             return true;
         }
-        else if (id == R.id.action_launch_map){
-            Log.i("MainActivity", "Going to launch map");
-            openPreferredLocationInMap();
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void openPreferredLocationInMap(){
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String location = settings.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        mapIntent.setData(Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", location).build());
-        if (mapIntent.resolveActivity(getPackageManager()) != null){
-            startActivity(mapIntent);
-        }
-        else {
-            Toast.makeText(getApplicationContext(),"No app to open maps", Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
 
     @Override
     protected void onPause() {
-        Log.i(LOG_TAG, "onPause");
+        //Log.i(LOG_TAG, "onPause");
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        Log.i(LOG_TAG, "onResume");
+        //Log.i(LOG_TAG, "onResume");
         super.onResume();
+        String newLocation = Utility.getPreferredLocation(this);
+        if ((newLocation != null) && !(mLocation.equals(newLocation))){
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            if (ff != null)
+                ff.onLocationChanged();
+            DetailsFragment df = (DetailsFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onLocationChanged(newLocation);
+            }
+            mLocation = newLocation;
+        }
     }
 
     @Override
     protected void onStop() {
-        Log.i(LOG_TAG, "onStop");
+        //Log.i(LOG_TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onStart() {
-        Log.i(LOG_TAG, "onStart");
+        //Log.i(LOG_TAG, "onStart");
         super.onStart();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i(LOG_TAG, "onDestroy");
+        //Log.i(LOG_TAG, "onDestroy");
         super.onDestroy();
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri) {
+        if (mTwoPane) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            Bundle args = new Bundle();
+            args.putParcelable(DetailsFragment.DETAIL_URI, contentUri);
+
+            DetailsFragment fragment = new DetailsFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(contentUri).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 }
