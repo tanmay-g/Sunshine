@@ -88,4 +88,32 @@
     <string name="pref_enable_notifications_true">Enabled</string>
     <string name="pref_enable_notifications_false">Not Enabled</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
+    <string name="default_empty_list_message">No Weather information available</string>
+    <string name="no_net_message">Unable to fetch weather data from the network.\nPlease check your connection.</string>
+    <string name="empty_list_server_down_message"> No weather information available.\nThe server is not returning data.</string>
+    <string name="empty_list_server_error_message"> No weather information available.\nThe server is not returning valid data.\nPlease check for an updated version of Sunshine.</string>
+    <string name="empty_list_invalid_location_message">No weather information available.\nThe location in settings is not recognized by the weather server.</string>
+
+    <string name="pref_location_error_description">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_unknown_description">Validating Location… (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+
+    <!-- A11y -->
+    <string name="a11y_forecast">Forecast: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_forecast_icon">Forecast icon: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_high_temp">High: <xliff:g id="high">%1$s</xliff:g></string>
+    <string name="a11y_low_temp">Low: <xliff:g id="low">%1$s</xliff:g></string>
+
+
+    <!-- Format for retrieving art from an external source [CHAR LIMIT=NONE] -->
+    <string name="format_default_art_url" translatable="false">https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-xxhdpi/art_<xliff:g id="description">%s</xliff:g>.png</string>
+
+    <string name="format_coloured_art_url" translatable="false">https://raw.githubusercontent.com/udacity/sunshine_icons/master/Archive/Colored/art_<xliff:g id="description">%s</xliff:g>.png</string>
+    <string name="format_mono_art_url" translatable="false">https://raw.githubusercontent.com/udacity/sunshine_icons/master/Archive/Mono/art_<xliff:g id="description">%s</xliff:g>.png</string>
+
+    <string name="default_icons_name">Default Icons</string>
+    <string name="alt_coloured_icons_name">Alternate Icons (Coloured)</string>
+    <string name="alt_mono_icons_name">Alternate Icons (Monochrome)</string>
+    <string name="pref_icons_label">Weather Icons</string>
+    <string name="pref_icons_key">pref_icons_key</string>
+
 </resources>

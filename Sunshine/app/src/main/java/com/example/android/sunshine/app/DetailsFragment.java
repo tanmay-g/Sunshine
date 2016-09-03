@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 /**
@@ -218,7 +219,13 @@ public class DetailsFragment extends Fragment implements LoaderManager.LoaderCal
 
         mForecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
 
-        weatherIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+        Glide
+                .with(this)
+                .load(Utility.getArtUrlForWeatherCondition(getActivity(), weatherId))
+                .error(Utility.getArtResourceForWeatherCondition(weatherId))
+                .crossFade()
+                .into(weatherIconView);
+//        weatherIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
         dayView.setText(dayString);
         dateView.setText(dateString);
         maxView.setText(high);
@@ -227,6 +234,14 @@ public class DetailsFragment extends Fragment implements LoaderManager.LoaderCal
         humidityView.setText(humidityText);
         pressureView.setText(pressureText);
         windView.setText(windText);
+
+        weatherIconView.setContentDescription(getString(R.string.a11y_forecast_icon, weatherDescription));
+        weatherDescView.setContentDescription(getString(R.string.a11y_forecast, weatherDescription));
+        maxView.setContentDescription(getString(R.string.a11y_high_temp, high));
+        minView.setContentDescription(getString(R.string.a11y_low_temp, low));
+        humidityView.setContentDescription(humidityText);
+        pressureView.setContentDescription(pressureText);
+        windView.setContentDescription(windText);
 
         if (mShareActionProvider != null && mForecastString != null) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());

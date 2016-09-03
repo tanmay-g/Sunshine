@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:textAppearanceLarge"
-                    android:textSize="96sp"
+                    android:textSize="72sp"
                     android:fontFamily="sans-serif-light"
                     android:id="@+id/maxText" />
 
@@ -54,7 +54,8 @@
                     android:textSize="48sp"
                     android:fontFamily="sans-serif-light"
                     android:textColor="@color/details_grey"
-                    android:layout_marginLeft="@dimen/fab_margin"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:id="@+id/minText" />
             </LinearLayout>
 
@@ -67,10 +68,11 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
-                    android:id="@+id/weatherIcon"/>
+                    android:id="@+id/weatherIcon"
+                    android:adjustViewBounds="true" />
 
                 <TextView
                     android:layout_width="wrap_content"

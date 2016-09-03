@@ -127,6 +127,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
                     .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
+            Log.i(LOG_TAG, "Will start detail intent");
             Intent intent = new Intent(this, DetailActivity.class)
                     .setData(contentUri).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

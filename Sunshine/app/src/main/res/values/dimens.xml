@@ -5,4 +5,5 @@
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="fab_margin">8dp</dimen>
     <dimen name="detail_text_margin">4dp</dimen>
+    <dimen name="notification_large_icon_default">48dp</dimen>
 </resources>

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -16,6 +18,7 @@ import android.widget.TextView;
 public class ForecastAdapter extends CursorAdapter {
 
     private static final int VIEW_TYPE_COUNT = 2;
+    private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
     private final int VIEW_TYPE_TODAY = 0;
     private final int VIEW_TYPE_FUTURE = 1;
     private boolean mIsTwoPane = false;
@@ -70,20 +73,24 @@ public class ForecastAdapter extends CursorAdapter {
         // Use placeholder image for now
         ImageView iconView = viewHolder.iconView;
         int viewType = getItemViewType(cursor.getPosition());
+        int fallbackIconId;
+        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
         switch (viewType){
             case VIEW_TYPE_TODAY:{
-                iconView.setImageResource(
-                        Utility.getArtResourceForWeatherCondition(
-                                cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+                fallbackIconId = Utility.getArtResourceForWeatherCondition(weatherId);
                 break;
             }
-            case VIEW_TYPE_FUTURE: {
-                iconView.setImageResource(
-                        Utility.getIconResourceForWeatherCondition(
-                                cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
-                break;
+            default: {
+                fallbackIconId = Utility.getIconResourceForWeatherCondition(weatherId);
             }
         }
+//        Log.i(LOG_TAG, Utility.getArtUrlForWeatherCondition(context, weatherId));
+        Glide
+                .with(context)
+                .load(Utility.getArtUrlForWeatherCondition(context, weatherId))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(iconView);
 
         Long dateText = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         TextView dateView = viewHolder.dateView;
@@ -92,6 +99,7 @@ public class ForecastAdapter extends CursorAdapter {
         String forecastText = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         TextView forecastView = viewHolder.descriptionView;
         forecastView.setText(forecastText);
+        forecastView.setContentDescription(context.getString(R.string.a11y_forecast, forecastText));
 
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
@@ -99,11 +107,15 @@ public class ForecastAdapter extends CursorAdapter {
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
         TextView highView = viewHolder.highTempView;
-        highView.setText(Utility.formatTemperature(context, high, isMetric));
+        String highText = Utility.formatTemperature(context, high, isMetric);
+        highView.setText(highText);
+        highView.setContentDescription(context.getString(R.string.a11y_high_temp, highText));
 
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         TextView lowView = viewHolder.lowTempView;
-        lowView.setText(Utility.formatTemperature(context, low, isMetric));
+        String lowText = Utility.formatTemperature(context, low, isMetric);
+        lowView.setText(lowText);
+        lowView.setContentDescription(context.getString(R.string.a11y_low_temp, lowText));
     }
 
     public void setIsTwoPane(boolean IsTwoPane) {

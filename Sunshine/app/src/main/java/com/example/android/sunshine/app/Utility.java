@@ -17,14 +17,21 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utility {
+    public static final String LOCATION_STATUS_PREF_KEY = "locationStatusPref";
+
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
@@ -179,6 +186,35 @@ public class Utility {
         return String.format(context.getString(windFormat), windSpeed, direction);
     }
 
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        String iconPackurl = settings.getString(context.getString(R.string.pref_icons_key), context.getString(R.string.format_default_art_url));
+
+        if (weatherId >= 200 && weatherId <= 232) {
+            return String.format(Locale.US, iconPackurl, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return String.format(Locale.US, iconPackurl,  "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return String.format(Locale.US, iconPackurl,  "rain");
+        } else if (weatherId == 511) {
+            return String.format(Locale.US, iconPackurl,  "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return String.format(Locale.US, iconPackurl,  "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return String.format(Locale.US, iconPackurl,  "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return String.format(Locale.US, iconPackurl,  "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return String.format(Locale.US, iconPackurl,  "storm");
+        } else if (weatherId == 800) {
+            return String.format(Locale.US, iconPackurl,  "clear");
+        } else if (weatherId == 801) {
+            return String.format(Locale.US, iconPackurl,  "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return String.format(Locale.US, iconPackurl,  "clouds");
+        }
+        return null;
+    }
 
     /**
      * Helper method to provide the icon resource id according to the weather condition id returned
@@ -248,6 +284,41 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    public static boolean isConnected(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static void setLocationStatus(Context context, @SunshineSyncAdapter.LocationStatus int status){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        settingsEditor.putInt(LOCATION_STATUS_PREF_KEY, status);
+        settingsEditor.apply();
+    }
+    @SunshineSyncAdapter.LocationStatus
+    public static int getLocationStatus(Context context){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        switch (settings.getInt(LOCATION_STATUS_PREF_KEY, SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN)){
+            case SunshineSyncAdapter.LOCATION_STATUS_OK:
+                return SunshineSyncAdapter.LOCATION_STATUS_OK;
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                return SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN;
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                return SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID;
+            case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                return SunshineSyncAdapter.LOCATION_STATUS_INVALID;
+            default:
+                return SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN;
+        }
+    }
+
+    public static void resetLocationStatus(Context context){
+        setLocationStatus(context, SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
     }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -9,6 +9,21 @@
     android:gravity="left">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_date_textview"
+        android:fontFamily="sans-serif-condensed"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/white"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:orientation="vertical"
@@ -16,17 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:gravity="start"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginLeft="60dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/list_item_date_textview"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/white"/>
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -69,16 +76,7 @@
                 android:textColor="@color/white"
                 android:id="@+id/list_item_forecast_textview" />
         </LinearLayout>
+
     </LinearLayout>
 
-
-<!--TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/list_item_forecast_textview"
-    android:text="@string/entry1"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical">
-
-</TextView-->
-
+</LinearLayout>
