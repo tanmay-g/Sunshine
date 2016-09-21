@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "24764820500",
+    "firebase_url": "https://celestial-sonar-142309.firebaseio.com",
+    "project_id": "celestial-sonar-142309",
+    "storage_bucket": "celestial-sonar-142309.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24764820500:android:83b792e26f07bf18",
+        "android_client_info": {
+          "package_name": "com.example.android.sunshine.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24764820500-en5rsirfhdffaj6rv086i1ufutqamhj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "<REDACTED>"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

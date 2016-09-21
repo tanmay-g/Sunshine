@@ -3,27 +3,31 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
-
-public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback{
+public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     String mLocation = null;
     boolean mTwoPane;
     //private final String FORECASTFRAGMENT_TAG = "ForecastFragmentTag";
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         mLocation = Utility.getPreferredLocation(this);
         if (findViewById(R.id.weather_detail_container) != null){
             mTwoPane = true;
@@ -41,7 +45,34 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
         ff.setAdapterIsTwoPane(mTwoPane);
         SunshineSyncAdapter.initializeSyncAdapter(this);
+
+//        if (!checkPlayServices()) {
+//            // This is where we could either prompt a user that they should install
+//            // the latest version of Google Play Services, or add an error snackbar
+//            // that some features won't be available.
+//        }
     }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+//    private boolean checkPlayServices() {
+//        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+//        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+//        if (resultCode != ConnectionResult.SUCCESS) {
+//            if (apiAvailability.isUserResolvableError(resultCode)) {
+//                apiAvailability.getErrorDialog(this, resultCode,
+//                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            } else {
+//                Log.i(LOG_TAG, "This device is not supported.");
+//                finish();
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,12 +102,6 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
 
     @Override
-    protected void onPause() {
-        //Log.i(LOG_TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
     protected void onResume() {
         //Log.i(LOG_TAG, "onResume");
         super.onResume();
@@ -93,23 +118,6 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         }
     }
 
-    @Override
-    protected void onStop() {
-        //Log.i(LOG_TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        //Log.i(LOG_TAG, "onStart");
-        super.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        //Log.i(LOG_TAG, "onDestroy");
-        super.onDestroy();
-    }
 
     @Override
     public void onItemSelected(Uri contentUri) {
@@ -122,12 +130,12 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
             DetailsFragment fragment = new DetailsFragment();
             fragment.setArguments(args);
-
+//            Log.i(LOG_TAG, "Will now replace the fragment");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-            Log.i(LOG_TAG, "Will start detail intent");
+//            Log.i(LOG_TAG, "Will start detail intent");
             Intent intent = new Intent(this, DetailActivity.class)
                     .setData(contentUri).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

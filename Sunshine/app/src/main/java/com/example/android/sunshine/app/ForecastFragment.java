@@ -123,7 +123,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 mSelectedItemPosition = position;
-                Log.i(LOG_TAG, "Got click at: " + position);
+//                Log.i(LOG_TAG, "Got click at: " + position);
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
@@ -136,6 +136,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                                     locationSetting, cursor.getLong(COL_WEATHER_DATE)
                             ));
                     //startActivity(intent);
+                }
+                else {
+                    Log.e(LOG_TAG, "Got empty cursor for this date");
                 }
 //                String forecast = ((TextView) view).getText().toString();
 //                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
