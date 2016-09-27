@@ -9,6 +9,9 @@
         <item name="toolbarStyle">@style/Toolbar</item>
     </style>
 
+    <style name="AppTheme.Main" parent="@style/AppTheme"/>
+    <style name="AppTheme.Details" parent="@style/AppTheme"/>
+
     <!-- Main activity theme. -->
     <style name="ForecastTheme" parent="AppTheme">
         <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>

@@ -178,5 +178,15 @@
     <!-- Used to form a severe weather alert that reads "Heads up: <weather> in <location>!" -->
     <string name="fcm_weather_alert">Heads up: %1$s in %2$s!</string>
     <string name="fcm_defaultSenderId" translatable="false">24764820500</string>
+    
+    
+    <string name="transition_name_shared_detail">SharedTranDetail1</string>
+    <string name="transition_name_shared_main">SharedTranMain(<xliff:g id="MainSharedTranName">%1$d</xliff:g>xliff:g>)</string>
 
+    <string name="pref_current_location_desc">Use my location</string>
+
+    <string name="pref_location_latitude" translatable="false">loc-latitude</string>
+    <string name="pref_location_longitude" translatable="false">loc-longitude</string>
+
+    <string name="attribution_text">Powered by Google</string>
 </resources>

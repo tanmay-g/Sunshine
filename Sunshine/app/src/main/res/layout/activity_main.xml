@@ -8,7 +8,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <!--<android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -27,11 +27,14 @@
     </android.support.v7.widget.Toolbar>-->
 
     <fragment
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fragment_forecast"
         android:name="com.example.android.sunshine.app.ForecastFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@android:layout/list_content" />
+        app:sharedElementTransitions="true"
+        tools:layout="@layout/fragment_main" />
+        <!--tools:layout="@android:layout/list_content"-->
         <!--tools:context="com.example.android.sunshine.app.ForecastFragment"-->
 
 </FrameLayout>

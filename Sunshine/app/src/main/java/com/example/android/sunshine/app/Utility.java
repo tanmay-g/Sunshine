@@ -32,6 +32,8 @@ import java.util.Locale;
 public class Utility {
     public static final String LOCATION_STATUS_PREF_KEY = "locationStatusPref";
 
+    public static float DEFAULT_LATLONG = 0F;
+
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
@@ -349,5 +351,22 @@ public class Utility {
         String sunshineArtPack = context.getString(R.string.format_default_art_url);
         return prefs.getString(context.getString(R.string.pref_icons_key),
                 sunshineArtPack).equals(sunshineArtPack);
+    }
+
+    public static boolean isLatLongSet(Context context){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        return settings.contains(context.getString(R.string.pref_location_latitude))
+                &&
+                settings.contains(context.getString(R.string.pref_location_longitude));
+    }
+
+    public static float getLatitude(Context context){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        return settings.getFloat(context.getString(R.string.pref_location_latitude), DEFAULT_LATLONG);
+    }
+
+    public static float getLongitude(Context context){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        return settings.getFloat(context.getString(R.string.pref_location_longitude), DEFAULT_LATLONG);
     }
 }

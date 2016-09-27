@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.sunshine.app.ForecastFragment">
-    <ListView
-        style="@style/ForecastListStyle"
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/listview_forecast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null" />
+        android:scrollbars="vertical"
+        />
+        <!--style="@style/ForecastListStyle"-->
+        <!--android:divider="@null" -->
     <!-- empty list -->
     <TextView
         android:id="@+id/empty"
