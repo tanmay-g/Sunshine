@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback{
@@ -33,11 +34,19 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mLocation = Utility.getPreferredLocation(this);
+        Uri contentUri = getIntent() != null ? getIntent().getData() : null;
         if (findViewById(R.id.weather_detail_container) != null){
             mTwoPane = true;
             if (savedInstanceState == null) {
+
+                DetailsFragment detailsFragment = new DetailsFragment();
+                if (contentUri != null){
+                    Bundle args = new Bundle();
+                    args.putParcelable(DetailsFragment.DETAIL_URI, contentUri);
+                    detailsFragment.setArguments(args);
+                }
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailsFragment(),DETAILFRAGMENT_TAG)
+                        .replace(R.id.weather_detail_container, detailsFragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         }
@@ -48,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
         ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
         ff.setAdapterIsTwoPane(mTwoPane);
+        if (contentUri != null){
+            ff.setInitialSelectedDate(WeatherContract.WeatherEntry.getDateFromUri(contentUri));
+        }
         SunshineSyncAdapter.initializeSyncAdapter(this);
 
 //        if (!checkPlayServices()) {

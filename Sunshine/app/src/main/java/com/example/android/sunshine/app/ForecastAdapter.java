@@ -109,13 +109,16 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
         ImageView iconView = forecastAdapterViewHolder.mIconView;
         int defaultImage;
         int weatherId = mCursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        boolean useLongToday;
         switch (getItemViewType(position)){
             case VIEW_TYPE_TODAY:{
                 defaultImage = Utility.getArtResourceForWeatherCondition(weatherId);
+                useLongToday = true;
                 break;
             }
             default: {
                 defaultImage = Utility.getIconResourceForWeatherCondition(weatherId);
+                useLongToday = false;
             }
         }
         if (Utility.usingLocalGraphics(mContext)){
@@ -138,7 +141,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
 
         Long dateText = mCursor.getLong(COL_WEATHER_DATE);
         TextView dateView = forecastAdapterViewHolder.mDateView;
-        dateView.setText(Utility.getFriendlyDayString(mContext, dateText));
+        dateView.setText(Utility.getFriendlyDayString(mContext, dateText, useLongToday));
 
         String forecastText = mCursor.getString(ForecastFragment.COL_WEATHER_DESC);
         TextView forecastView = forecastAdapterViewHolder.mDescriptionView;

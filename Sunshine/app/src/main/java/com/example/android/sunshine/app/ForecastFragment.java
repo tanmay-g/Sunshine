@@ -80,7 +80,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public final static String WEATHER_DATA = "com.example.sunshine.MESSAGE";
 
 
-    private int mSelectedItemPosition = RecyclerView.NO_POSITION;
+//    private int mSelectedItemPosition = RecyclerView.NO_POSITION;
     private final static String mSelectedItemPosKey = "selectedItemPosKey";
 
     private boolean mtwoPane;
@@ -94,6 +94,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private TextView emptyMessageView;
 
+    public void setInitialSelectedDate(long mInitialSelectedDate) {
+        this.mInitialSelectedDate = mInitialSelectedDate;
+    }
+
+    private long mInitialSelectedDate = -1;
 
     private ForecastAdapter.ForecastAdapterOnClickHandler clickHandler = new ForecastAdapter.ForecastAdapterOnClickHandler() {
         @Override
@@ -106,7 +111,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                             locationSetting, date
                     ), vh);
-            mSelectedItemPosition = vh.getAdapterPosition();
+//            mSelectedItemPosition = vh.getAdapterPosition();
         }
     };
 
@@ -133,9 +138,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mForecastAdapter.setIsTwoPane(mtwoPane);
     }
 
-    public void setmSelectedItemPosition(int mSelectedItemPosition) {
-        this.mSelectedItemPosition = mSelectedItemPosition;
-    }
+//    public void setmSelectedItemPosition(int mSelectedItemPosition) {
+//        this.mSelectedItemPosition = mSelectedItemPosition;
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -196,10 +201,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         if (savedInstanceState != null){
-            if (savedInstanceState.containsKey(mSelectedItemPosKey)) {
-                mSelectedItemPosition = savedInstanceState.getInt(mSelectedItemPosKey);
-//                mainRecyclerView.smoothScrollToPosition(mSelectedItemPosition);
-            }
+//            if (savedInstanceState.containsKey(mSelectedItemPosKey)) {
+//                mSelectedItemPosition = savedInstanceState.getInt(mSelectedItemPosKey);
+////                mainRecyclerView.smoothScrollToPosition(mSelectedItemPosition);
+//            }
             mForecastAdapter.onRestoreInstanceState(savedInstanceState);
         }
         return rootView;
@@ -260,8 +265,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mSelectedItemPosition != RecyclerView.NO_POSITION)
-            outState.putInt(mSelectedItemPosKey, mSelectedItemPosition);
+//        if (mSelectedItemPosition != RecyclerView.NO_POSITION)
+//            outState.putInt(mSelectedItemPosKey, mSelectedItemPosition);
         mForecastAdapter.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
@@ -353,8 +358,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         mForecastAdapter.swapCursor(data);
-        if (mainRecyclerView != null && mSelectedItemPosition != RecyclerView.NO_POSITION)
-            mainRecyclerView.smoothScrollToPosition(mSelectedItemPosition);
+//        if (mainRecyclerView != null && mSelectedItemPosition != RecyclerView.NO_POSITION)
+//            mainRecyclerView.smoothScrollToPosition(mSelectedItemPosition);
         updateEmptyView();
 
         if ( data.getCount() == 0 ) {
@@ -368,12 +373,31 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     // we see Children.
                     if (mainRecyclerView.getChildCount() > 0) {
                         mainRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        int itemPosition = mForecastAdapter.getSelectedItemPosition();
-                        if ( RecyclerView.NO_POSITION == itemPosition ) itemPosition = 0;
-                        RecyclerView.ViewHolder vh = mainRecyclerView.findViewHolderForAdapterPosition(itemPosition);
+//                        int itemPosition = mForecastAdapter.getSelectedItemPosition();
+//                        if ( RecyclerView.NO_POSITION == itemPosition ) itemPosition = 0;
+                        int position = mForecastAdapter.getSelectedItemPosition();
+                        if (position == RecyclerView.NO_POSITION && mInitialSelectedDate != -1){
+                            Cursor data = mForecastAdapter.getCursor();
+                            int count = data.getCount();
+                            int dateColumn = data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
+                            for (int i=0; i < count; i++){
+                                data.moveToPosition(i);
+                                if ( data.getLong(dateColumn) == mInitialSelectedDate ) {
+                                    position = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (position == RecyclerView.NO_POSITION)
+                            position = 0;
+                        mainRecyclerView.smoothScrollToPosition(position);
+                        RecyclerView.ViewHolder vh = mainRecyclerView.findViewHolderForAdapterPosition(position);
                         if ( null != vh && mAutoSelectView ) {
                             mForecastAdapter.selectView( vh );
                         }
+
+
                         if (mHoldForTransition)
                             Log.i(LOG_TAG, "Starting the supportStartPostponedEnterTransition");
                             getActivity().supportStartPostponedEnterTransition();

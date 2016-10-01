@@ -178,8 +178,8 @@
     <!-- Used to form a severe weather alert that reads "Heads up: <weather> in <location>!" -->
     <string name="fcm_weather_alert">Heads up: %1$s in %2$s!</string>
     <string name="fcm_defaultSenderId" translatable="false">24764820500</string>
-    
-    
+
+
     <string name="transition_name_shared_detail">SharedTranDetail1</string>
     <string name="transition_name_shared_main">SharedTranMain(<xliff:g id="MainSharedTranName">%1$d</xliff:g>xliff:g>)</string>
 
@@ -189,4 +189,11 @@
     <string name="pref_location_longitude" translatable="false">loc-longitude</string>
 
     <string name="attribution_text">Powered by Google</string>
+
+    <string name="add_widget">Add widget</string>
+    <string name="title_widget_today">Sunshine Today</string>
+    <string name="title_widget_detail">Sunshine Details</string>
+
+    <string name="muzei_description">Today\'s weather</string>
+
 </resources>

@@ -35,6 +35,7 @@ import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.muzei.WeatherMuzeiSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +83,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int LOCATION_STATUS_UNKNOWN = 3;
     public static final int LOCATION_STATUS_INVALID = 4;
 
+    public static final String ACTION_DATA_UPDATED = "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -178,6 +180,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
+
+            Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                    .setPackage(context.getPackageName());
+            context.sendBroadcast(dataUpdatedIntent);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             Utility.setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
@@ -555,6 +561,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                         WeatherContract.WeatherEntry.COLUMN_DATE + "<= ?",
                         new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
                 Log.d(LOG_TAG, "Sunshine Update Complete. " + deleted+ " Deleted");
+                updateMuzei();
                 notifyWeather();
             }
 
@@ -566,6 +573,15 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
         }
     }
+
+    private void updateMuzei(){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Context context = getContext();
+                context.startService(new Intent(ACTION_DATA_UPDATED)
+                .setClass(context, WeatherMuzeiSource.class));
+            }
+
+        }
 
     /**
      * Helper method to handle insertion of a new location in the weather database.
