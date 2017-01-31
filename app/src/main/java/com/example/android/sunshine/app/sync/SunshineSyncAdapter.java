@@ -36,6 +36,13 @@ import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.muzei.WeatherMuzeiSource;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,8 +92,41 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String ACTION_DATA_UPDATED = "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
 
+    private GoogleApiClient mGoogleApiClient;
+
+//    private static final String HIGH_PATH = "/high";
+//    private static final String lOW_PATH = "/low";
+//    private static final String IMAGE_PATH = "/image";
+    private static final String WEAR_DATA_PATH = "/sunshineweardata";
+
+    private static final String HIGH_KEY = "high";
+    private static final String LOW_KEY = "low";
+    private static final String ID_KEY = "weather_id";
+
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        Log.d(LOG_TAG, "onConnected: " + connectionHint);
+                        // Now you can use the Data Layer API
+                    }
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        Log.d(LOG_TAG, "onConnectionSuspended: " + cause);
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult result) {
+                        Log.d(LOG_TAG, "onConnectionFailed: " + result);
+                    }
+                })
+                // Request access only to the Wearable API
+                .addApi(Wearable.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -535,6 +575,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 high = temperatureObject.getDouble(OWM_MAX);
                 low = temperatureObject.getDouble(OWM_MIN);
 
+                sendToWearable(high, low, weatherId);
+
                 ContentValues weatherValues = new ContentValues();
 
                 weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
@@ -572,6 +614,33 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
+    }
+
+
+    private void sendToWearable(double high, double low, int weatherId){
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(WEAR_DATA_PATH);
+        putDataMapRequest.getDataMap().putString(HIGH_KEY, Utility.formatTemperature(getContext(), high));
+        putDataMapRequest.getDataMap().putString(LOW_KEY, Utility.formatTemperature(getContext(), low));
+        putDataMapRequest.getDataMap().putInt(ID_KEY, weatherId);
+
+        PutDataRequest request = putDataMapRequest.asPutDataRequest();
+//        request.setUrgent();
+
+
+        Log.d(LOG_TAG, "Generating DataItem: " + request);
+        if (!mGoogleApiClient.isConnected()) {
+            return;
+        }
+        Wearable.DataApi.putDataItem(mGoogleApiClient, request)
+                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                    @Override
+                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                        if (!dataItemResult.getStatus().isSuccess()) {
+                            Log.e(LOG_TAG, "ERROR: failed to putDataItem, status code: "
+                                    + dataItemResult.getStatus().getStatusCode());
+                        }
+                    }
+                });
     }
 
     private void updateMuzei(){
@@ -632,4 +701,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // Wait, that worked?  Yes!
         return locationId;
     }
+
+
 }
