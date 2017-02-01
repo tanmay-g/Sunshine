@@ -159,8 +159,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 .addOnConnectionFailedListener(this)
                 .addApi(Wearable.API)
                 .build();
-        private String mHighValue;
-        private String mLowValue;
+        private String mHighValue = "25°";
+        private String mLowValue = "15°";
         private int mWeatherId;
         private Date mDate;
         private int mDigitalTextColor;
@@ -214,6 +214,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            Log.d(LOG_TAG, "onConnected: Going to add API listener");
+            Wearable.DataApi.addListener(mGoogleApiClient, Engine.this);
 
         }
 
